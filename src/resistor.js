@@ -62,7 +62,20 @@
  * then use the copied object like a lookup table
  */
 function getColorValue(color) {
-  // write your code here & return value
+  const colorCodes = {
+    black: 0,
+    brown: 1,
+    red: 2,
+    orange: 3,
+    yellow: 4,
+    green: 5,
+    blue: 6,
+    violet: 7,
+    grey: 8,
+    white: 9,
+  };
+
+  return colorCodes[color];
 }
 
 /**
@@ -79,7 +92,22 @@ function getColorValue(color) {
  * then use the copied object like a lookup table
  */
 function getMultiplierValue(color) {
-  // write your code here & return value
+  const multiplierCodes = {
+    black: 1,
+    brown: 10,
+    red: 100,
+    orange: 1000,
+    yellow: 10000,
+    green: 100000,
+    blue: 1000000,
+    violet: 10000000,
+    grey: 100000000,
+    white: 1000000000,
+    gold: 0.1,
+    silver: 0.01,
+  };
+
+  return multiplierCodes[color];
 }
 
 /**
@@ -106,7 +134,22 @@ function getMultiplierValue(color) {
  *
  */
 function getThreeBandValue(bands) {
-  // write your code here & return value
+  let c1 = getColorValue(bands.color1);
+  const c2 = getColorValue(bands.color2);
+  const m = getMultiplierValue(bands.multiplier);
+
+  c1 *= 10;
+  let v = c1 + c2;
+  v *= m;
+
+  if (bands.multiplier === 'silver') {
+    v = Math.round(v * 100) / 100;
+  } else if (bands.multiplier === ' gold') {
+    v = Math.round(v * 10) / 10;
+    // Says this is uncovered since the tests never test of a 'gold' multiplier
+  }
+
+  return v;
 }
 
 /**
@@ -131,7 +174,31 @@ function getThreeBandValue(bands) {
  *
  */
 function formatNumber(val) {
-  // write your code here & return value
+  let str = val.toString();
+
+  if (str.length < 3) {
+    // do nothing
+  } else if (str.length < 7) {
+    str = str.substring(0, str.length - (6 - str.length));
+
+    if (str.length > 3) {
+      str = str.substring(0, 4);
+    }
+
+    str /= 10;
+    str += 'k';
+  } else if (str.length < 10) {
+    str = str.substring(0, str.length - 5);
+
+    str /= 10;
+    str += 'M';
+  } else if (str.length >= 10) {
+    str = str.substring(0, str.length - 8);
+    str /= 10;
+    str += 'G';
+  }
+
+  return str;
 }
 
 /**
@@ -150,7 +217,18 @@ function formatNumber(val) {
  * example: 'green' => '±0.5%'
  */
 function getTolerance(color) {
-  // write your code here & return value
+  const tolerance = {
+    brown: '±1%',
+    red: '±2%',
+    green: '±0.5%',
+    blue: '±0.25%',
+    violet: '±0.1%',
+    grey: '±0.05%',
+    gold: '±5%',
+    silver: '±10%',
+  };
+
+  return tolerance[color];
 }
 
 /**
@@ -182,7 +260,11 @@ function getTolerance(color) {
  * must use functions in this file to build the string using a template literal
  */
 function getResistorOhms(bands) {
-  // write your code here & return value
+  let str = 'Resistor value: ';
+  str += formatNumber(getThreeBandValue(bands));
+  str += ` Ohms ${getTolerance(bands.tolerance)}`;
+
+  return str;
 }
 
 module.exports = {
